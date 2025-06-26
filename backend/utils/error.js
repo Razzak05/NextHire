@@ -1,4 +1,4 @@
-export const error = (err, res) => {
+export const handleError = (err, res) => {
   console.log(err);
   return res.json({
     message: "Internal Server Error",
