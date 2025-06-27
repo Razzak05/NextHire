@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
-import User from "../models/user.model";
-import { handleError } from "../utils/error";
+import User from "../models/user.model.js";
+import { handleError } from "../utils/error.js";
 
-const protect = async (req, res) => {
+const protect = async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -13,7 +13,7 @@ const protect = async (req, res) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.user.id;
-    const user = await User.findById({ userId }).select("-password");
+    const user = await User.findById(userId).select("-password");
 
     if (!user) {
       return res

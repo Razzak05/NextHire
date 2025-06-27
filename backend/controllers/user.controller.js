@@ -6,7 +6,7 @@ export const Register = async (req, res) => {
   try {
     const { name, email, phoneNumber, role, password } = req.body;
 
-    if (!name || !email || !phonenumber || !role || !password) {
+    if (!name || !email || !phoneNumber || !role || !password) {
       console.log("Require all the input fields");
     }
 
@@ -72,12 +72,14 @@ export const Login = async (req, res) => {
     });
 
     res.status(200).json({
+      message: "Login Successful !",
       user: {
         _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
       },
+      success: true,
     });
   } catch (error) {
     error(error, res);
@@ -93,7 +95,9 @@ export const Logout = async (req, res) => {
       sameSite: true,
     });
 
-    return res.status(200).json({ message: "Logged Out Successfully !" });
+    return res
+      .status(200)
+      .json({ message: "Logged Out Successfully !", success: true });
   } catch (error) {
     error(error, res);
   }
@@ -102,13 +106,7 @@ export const Logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { name, email, phoneNumber, bio, skills } = req.body;
-    if (!name || !email || !phoneNumber || !bio || !skills) {
-      return res.status(400).json({
-        message: "Something is missing",
-        success: false,
-      });
-    }
-    const skillsArray = skills.split(",");
+    const skillsArray = skills?.split(",");
     const userId = req.user._id;
     let user = await User.findById(userId);
 
@@ -120,11 +118,11 @@ export const updateProfile = async (req, res) => {
     }
 
     // update data
-    (user.name = name),
-      (user.email = email),
-      (user.phoneNumber = phoneNumber),
-      (user.profile.bio = bio),
-      (user.profile.skills = skills);
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (bio) user.profile.bio = bio;
+    if (skills) user.profile.skills = skillsArray;
 
     // resume comes later here...
     await user.save();

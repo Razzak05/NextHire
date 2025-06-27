@@ -5,6 +5,7 @@ const companySchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     description: {
       type: String,
@@ -16,7 +17,7 @@ const companySchema = mongoose.Schema(
     logo: {
       type: String,
     },
-    userId: {
+    creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
