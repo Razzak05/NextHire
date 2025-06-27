@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import { handleError } from "../utils/error.js";
 
-const protect = async (req, res, next) => {
+export const protect = async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -29,4 +29,12 @@ const protect = async (req, res, next) => {
   }
 };
 
-export default protect;
+export const recruiter = async (req, res, next) => {
+  if (req.user && req.user.role === "recruiter") {
+    next();
+  } else {
+    res
+      .status(403)
+      .json({ message: "Not authorized as recruiter", success: false });
+  }
+};
