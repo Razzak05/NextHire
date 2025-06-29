@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 import userRouter from "./routes/user.routes.js";
 import companyRouter from "./routes/company.route.js";
 import jobRouter from "./routes/job.route.js";
+import applicationRouter from "./routes/application.route.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ connectDB();
 app.use("/api/user", userRouter);
 app.use("/api/company", companyRouter);
 app.use("/api/job", jobRouter);
+app.use("/api/application", applicationRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is Running on PORT: ${process.env.PORT}`);
