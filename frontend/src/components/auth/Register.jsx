@@ -3,6 +3,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const {
@@ -56,7 +57,6 @@ const Register = () => {
           <Input
             type="tel"
             className="mb-3"
-            placeholder="example@gmail.com"
             {...register("phone", {
               required: "Phone number is required",
             })}
@@ -116,6 +116,12 @@ const Register = () => {
         <Button type="submit" className="w-full my-4">
           Sign Up
         </Button>
+        <span className="text-sm">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600">
+            Login
+          </Link>
+        </span>
       </form>
     </div>
   );
