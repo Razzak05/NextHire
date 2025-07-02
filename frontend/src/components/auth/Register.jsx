@@ -4,6 +4,7 @@ import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const {
@@ -13,10 +14,40 @@ const Register = () => {
     reset,
   } = useForm();
 
+  const registerUser = async (formData) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URI}/register`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Login failed:",
+        error.response?.data?.message || error.message
+      );
+    }
+  };
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: registerUser,
+    onSuccess: () => {
+      reset();
+    },
+  });
+
+  const onSubmit = (formData) => {
+    mutate(formData);
+  };
+
   return (
     <div className="flex items-center justify-center max-w-7xl mx-auto">
       <form
-        action=""
+        action="submit"
+        onSubmit={handleSubmit(onSubmit)}
         className="w-1/2 border border-gray-200 rounded-md p-4 my-5"
       >
         <h1 className="font-bold text-xl mb-5">Sign Up</h1>
@@ -114,7 +145,7 @@ const Register = () => {
         </div>
 
         <Button type="submit" className="w-full my-4">
-          Sign Up
+          {isPending ? "Signing Up..." : "Sign Up"}
         </Button>
         <span className="text-sm">
           Already have an account?{" "}
