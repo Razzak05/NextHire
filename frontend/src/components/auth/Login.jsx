@@ -7,6 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "@/redux/slices/authSlice";
 
 const Login = () => {
   const {
@@ -17,6 +19,7 @@ const Login = () => {
   } = useForm();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const loginUser = async (formData) => {
     const response = await axios.post(
@@ -32,8 +35,14 @@ const Login = () => {
   const { mutate, isPending, error } = useMutation({
     mutationFn: loginUser,
     onSuccess: (response) => {
-      toast.success(response?.data?.message);
+      dispatch(loginSuccess(response?.data?.user));
+      const message = response?.data?.user?.name
+        ? `${response?.data?.user?.name.split(" ")[0]} Welcome back !`
+        : response?.data?.message;
+      toast.success(message);
+
       navigate("/");
+
       reset();
     },
     onError: (error) => {
