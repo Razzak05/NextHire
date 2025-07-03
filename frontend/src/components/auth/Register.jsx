@@ -23,10 +23,10 @@ const Register = () => {
       `${import.meta.env.VITE_BACKEND_URL}/user/register`,
       formData,
       {
-        withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       }
     );
     return response;
@@ -35,12 +35,12 @@ const Register = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: registerUser,
     onSuccess: (response) => {
-      toast(response?.data?.message || "Registration Successfull !");
+      toast.success(response?.data?.message || "Registration Successfull !");
       navigate("/login");
       reset();
     },
     onError: (error) => {
-      toast(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message);
     },
   });
 
@@ -48,7 +48,7 @@ const Register = () => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("email", data.email);
-    formData.append("phone", data.phone);
+    formData.append("phoneNumber", data.phone);
     formData.append("password", data.password);
     formData.append("role", data.role);
     if (data.profilePic?.length > 0) {
@@ -160,7 +160,9 @@ const Register = () => {
           <Input
             type="file"
             accept="image/*"
-            {...register("profilePic")}
+            {...register("profilePic", {
+              required: "Profile picture is required",
+            })}
             className="cursor-pointer w-3/4"
           />
         </div>

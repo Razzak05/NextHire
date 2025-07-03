@@ -2,13 +2,13 @@ import cloudinary from "../config/cloudinary.js";
 
 const uploadConfigs = {
   profile: {
-    folder: "/Home/NextHire/user-profiles",
+    folder: "NextHire/user-profiles",
     allowedFormats: ["png", "jpeg", "jpg", "webp"],
     maxSize: 5 * 1024 * 1024,
     resourceType: "image",
   },
   resume: {
-    folder: "/Home/NextHire/resumes",
+    folder: "NextHire/resumes",
     allowedFormats: ["pdf"],
     maxSize: 5 * 1024 * 1024,
     resourceType: "raw",
@@ -17,24 +17,18 @@ const uploadConfigs = {
 
 const uploadToCloudinary = async (file, type) => {
   try {
+    if (!uploadConfigs[type]) {
+      throw new Error(`Invalid upload type: ${type}`);
+    }
     //convert buffer to base64
     const base64Data = file.buffer.toString("base64");
     const dataURI = `data:${file.mimetype};base64,${base64Data}`;
 
     // upload to cloudinary
-    if (type === "profile") {
-      const result = await cloudinary.uploader.upload(
-        dataURI,
-        uploadConfigs.profile
-      );
-      return result;
-    } else {
-      const result = await cloudinary.uploader.upload(
-        dataURI,
-        uploadConfigs.resume
-      );
-      return result;
-    }
+    const result = await cloudinary.uploader.upload(
+      dataURI,
+      uploadConfigs[type]
+    );
 
     return {
       url: result.secure_url,

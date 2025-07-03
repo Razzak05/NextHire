@@ -1,12 +1,14 @@
 import { handleError } from "../utils/error.js";
 import User from "../models/user.model.js";
 import generateToken from "../utils/token.js";
+import cloudinaryHelper from "../utils/cloudinaryHelper.js";
 
 export const Register = async (req, res) => {
   try {
     const { name, email, phoneNumber, role, password } = req.body;
+    const profilePic = req.file;
 
-    if (!name || !email || !phoneNumber || !role || !password) {
+    if (!name || !email || !phoneNumber || !role || !password || !profilePic) {
       return res.status(400).json("Require all the input fields");
     }
 
@@ -15,12 +17,20 @@ export const Register = async (req, res) => {
       return res.status(400).json("User already Exists !");
     }
 
+    const uploadResult = await cloudinaryHelper.uploadToCloudinary(
+      profilePic,
+      "profile"
+    );
     const newUser = new User({
       name,
       email,
       phoneNumber,
       role,
       password,
+      profile: {
+        profilePic: uploadResult.url,
+        profilePicPublicId: uploadResult.public_id,
+      },
     });
 
     await newUser.save();

@@ -49,6 +49,9 @@ const userSchema = mongoose.Schema(
         type: String,
         default: "",
       },
+      profilePicPublicId: {
+        type: String,
+      },
     },
   },
   { timestamps: true }
