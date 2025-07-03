@@ -3,8 +3,10 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { toast } from "sonner";
 
 const Register = () => {
   const {
@@ -14,43 +16,55 @@ const Register = () => {
     reset,
   } = useForm();
 
+  const navigate = useNavigate();
+
   const registerUser = async (formData) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URI}/register`,
-        formData,
-        {
-          withCredentials: true,
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Login failed:",
-        error.response?.data?.message || error.message
-      );
-    }
+    const response = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/user/register`,
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response;
   };
 
   const { mutate, isPending } = useMutation({
     mutationFn: registerUser,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      toast(response?.data?.message || "Registration Successfull !");
+      navigate("/login");
       reset();
+    },
+    onError: (error) => {
+      toast(error?.response?.data?.message);
     },
   });
 
-  const onSubmit = (formData) => {
+  const onSubmit = (data) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("password", data.password);
+    formData.append("role", data.role);
+    if (data.profilePic?.length > 0) {
+      formData.append("profilePic", data.profilePic[0]); // file input is an array
+    }
     mutate(formData);
   };
 
   return (
     <div className="flex items-center justify-center max-w-7xl mx-auto">
       <form
-        action="submit"
         onSubmit={handleSubmit(onSubmit)}
         className="w-1/2 border border-gray-200 rounded-md p-4 my-5"
       >
         <h1 className="font-bold text-xl mb-5">Sign Up</h1>
+
         <div>
           <Label className="text-sm mb-2">Full Name</Label>
           <Input
@@ -93,7 +107,7 @@ const Register = () => {
             })}
           />
           {errors.phone && (
-            <p className="text-red-500 text-sm">{errors.email.message}</p>
+            <p className="text-red-500 text-sm">{errors.phone.message}</p>
           )}
         </div>
 
@@ -110,43 +124,54 @@ const Register = () => {
               },
             })}
           />
+          {errors.password && (
+            <p className="text-red-500 text-sm">{errors.password.message}</p>
+          )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 my-5">
-            <div className="flex items-center gap-3">
-              <Input
-                type="radio"
-                name="role"
-                value="student"
-                className="cursor-pointer"
-              />
-              <Label htmlFor="r1">Student</Label>
-            </div>
-            <div className="flex items-center gap-3">
-              <Input
-                type="radio"
-                name="role"
-                value="recruiter"
-                className="cursor-pointer"
-              />
-              <Label htmlFor="r2">Recruiter</Label>
-            </div>
+        <div className="flex items-center gap-6 my-4">
+          <div className="flex items-center gap-2">
+            <Input
+              type="radio"
+              id="student"
+              value="student"
+              {...register("role", { required: true })}
+              className="cursor-pointer"
+            />
+            <Label htmlFor="student">Student</Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Input
+              type="radio"
+              id="recruiter"
+              value="recruiter"
+              {...register("role", { required: true })}
+              className="cursor-pointer"
+            />
+            <Label htmlFor="recruiter">Recruiter</Label>
           </div>
         </div>
+        {errors.role && (
+          <p className="text-red-500 text-sm">Role is required</p>
+        )}
 
         <div className="flex items-center gap-2">
           <Label>Profile Picture</Label>
           <Input
             type="file"
             accept="image/*"
+            {...register("profilePic")}
             className="cursor-pointer w-3/4"
           />
         </div>
+        {errors.profilePic && (
+          <p className="text-red-500 text-sm">{errors.profilePic.message}</p>
+        )}
 
-        <Button type="submit" className="w-full my-4">
+        <Button type="submit" className="w-full my-4" disabled={isPending}>
           {isPending ? "Signing Up..." : "Sign Up"}
         </Button>
+
         <span className="text-sm">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-600">

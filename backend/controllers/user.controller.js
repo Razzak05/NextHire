@@ -7,12 +7,12 @@ export const Register = async (req, res) => {
     const { name, email, phoneNumber, role, password } = req.body;
 
     if (!name || !email || !phoneNumber || !role || !password) {
-      console.log("Require all the input fields");
+      return res.status(400).json("Require all the input fields");
     }
 
     const user = await User.findOne({ email });
     if (user) {
-      console.log("User already Exists !");
+      return res.status(400).json("User already Exists !");
     }
 
     const newUser = new User({
@@ -26,7 +26,7 @@ export const Register = async (req, res) => {
     await newUser.save();
 
     return res.status(201).json({
-      message: "New user is created successfully",
+      message: "User Registered Successfully !",
       user: {
         _id: newUser._id,
         name: newUser.name,

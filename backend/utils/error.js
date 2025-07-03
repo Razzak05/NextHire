@@ -1,6 +1,6 @@
 export const handleError = (err, res) => {
-  console.log(err);
   return res.json({
+    error: err,
     message: "Internal Server Error",
     success: false,
   });
