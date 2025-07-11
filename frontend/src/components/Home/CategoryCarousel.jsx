@@ -5,8 +5,8 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "./ui/carousel";
-import { Button } from "./ui/button";
+} from "../ui/carousel";
+import { Button } from "../ui/button";
 
 const categories = [
   "Frontend Developer",
