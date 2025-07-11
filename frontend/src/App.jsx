@@ -1,10 +1,10 @@
 import React from "react";
-import Navbar from "./components/ui/shared/Navbar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-import Home from "./components/Home";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import UserLayout from "./layouts/UserLayout";
+import Home from "./components/Home";
 
 const queryClient = new QueryClient();
 
@@ -12,11 +12,15 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* auth routes */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+
+          {/* user routes */}
+          <Route path="/" element={<UserLayout />}>
+            <Route index element={<Home />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

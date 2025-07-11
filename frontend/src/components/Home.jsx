@@ -1,9 +1,17 @@
 import React from "react";
-import Navbar from "./ui/shared/Navbar";
-import { Outlet } from "react-router-dom";
+import Navbar from "./shared/Navbar";
+import HeroSection from "./HeroSection";
+import CategoryCarousel from "./CategoryCarousel";
+import LatestJobs from "./LatestJobs";
 
 const Home = () => {
-  return <div></div>;
+  return (
+    <div>
+      <HeroSection />
+      <CategoryCarousel />
+      <LatestJobs />
+    </div>
+  );
 };
 
 export default Home;
