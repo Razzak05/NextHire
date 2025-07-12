@@ -57,7 +57,7 @@ export const Login = async (req, res) => {
       return res.json("Require all the input field");
     }
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User doesn't exists !" });
     }
@@ -81,14 +81,18 @@ export const Login = async (req, res) => {
       sameSite: "strict",
     });
 
+    user = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      contact: user.phoneNumber,
+      profile: user.profile,
+    };
+
     res.status(200).json({
       message: "Login Successful !",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      user,
       success: true,
     });
   } catch (error) {

@@ -19,16 +19,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   const registerUser = async (formData) => {
-    const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/user/register`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      }
-    );
+    const response = await axios.post("/user/register", formData);
     return response;
   };
 

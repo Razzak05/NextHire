@@ -4,8 +4,8 @@ import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
+import axiosInstance from "@/utils/axios";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "@/redux/slices/authSlice";
@@ -20,22 +20,19 @@ const Login = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const loginUser = async (formData) => {
-    const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/user/login`,
-      formData,
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axiosInstance.post("/user/login", formData);
     return response;
   };
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: loginUser,
     onSuccess: (response) => {
+      queryClient.invalidateQueries(["currentUser"]);
       dispatch(loginSuccess(response?.data?.user));
+
       const message = response?.data?.user?.name
         ? `${response?.data?.user?.name.split(" ")[0]} Welcome back !`
         : response?.data?.message;

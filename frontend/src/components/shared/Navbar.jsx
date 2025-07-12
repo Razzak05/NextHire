@@ -8,9 +8,20 @@ import {
 import { Button } from "../ui/button";
 import { LogOut, User2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const user = false;
+  const { user } = useSelector((state) => state.auth);
+
+  const getInitials = (fullName) => {
+    const words = fullName.split(" ");
+    const initials = words
+      .slice(0, 2)
+      .map((name) => name[0].toUpperCase())
+      .join("");
+    return initials;
+  };
+
   return (
     <div className="bg-white">
       <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
@@ -47,21 +58,15 @@ const Navbar = () => {
             <Popover>
               <PopoverTrigger asChild>
                 <Avatar className="cursor-pointer">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage src={user.profile?.profilePic} alt="@shadcn" />
+                  <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                 </Avatar>
               </PopoverTrigger>
               <PopoverContent className="w-64">
                 <div className="flex items-center gap-4 mb-3">
                   <Avatar>
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarImage src={user.profile?.profilePic} />
+                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                   </Avatar>
                   <div>
                     <h4 className="font-medium">Username</h4>
@@ -75,7 +80,7 @@ const Navbar = () => {
                   <div className="flex items-center gap-2 cursor-pointer">
                     <User2 className="w-4 h-4" />
                     <Button variant="link" className="p-0 h-auto text-sm">
-                      View Profile
+                      <Link to="/profile">View Profile</Link>
                     </Button>
                   </div>
                   <div className="flex items-center gap-2 cursor-pointer">
