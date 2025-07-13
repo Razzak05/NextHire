@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Bookmark } from "lucide-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Job = () => {
+  const navigate = useNavigate();
+  const jobId = 1;
   return (
     <div className="p-5 rounded-md shadow-md bg-white border border-gray-200">
       <div className="flex items-center justify-between text-sm text-gray-500">
@@ -48,7 +51,12 @@ const Job = () => {
       </div>
 
       <div className="flex items-center gap-3 mt-5">
-        <Button variant="outline">Details</Button>
+        <Button
+          onClick={() => navigate(`/description/${jobId}`)}
+          variant="outline"
+        >
+          Details
+        </Button>
         <Button className="bg-[#7209b7] text-white hover:bg-[#5c078f]">
           Save for Later
         </Button>

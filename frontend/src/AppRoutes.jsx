@@ -14,6 +14,7 @@ import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import CommonLayout from "./layouts/CommonLayout";
 import ProtectRoute from "./components/ProtectRoute";
+import JobDetail from "./components/Job/JobDetail";
 
 const AppRoutes = () => {
   return (
@@ -22,17 +23,11 @@ const AppRoutes = () => {
       <Route element={<CommonLayout />}>
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
+        <Route path="/description:id" element={<JobDetail />} />
       </Route>
 
       {/* protected user pages */}
-      <Route
-        path="/"
-        element={
-          <ProtectRoute>
-            <UserLayout />
-          </ProtectRoute>
-        }
-      >
+      <Route path="/" element={<UserLayout />}>
         <Route index element={<Home />} />
         <Route path="jobs" element={<Jobs />} />
         <Route path="browse" element={<Browse />} />
