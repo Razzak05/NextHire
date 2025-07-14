@@ -13,6 +13,14 @@ const router = express.Router();
 router.post("/register", upload.single("profilePic"), Register);
 router.post("/login", Login);
 router.post("/logout", protect, Logout);
-router.put("/update-profile", protect, updateProfile);
+router.put(
+  "/update-profile",
+  protect,
+  upload.fields([
+    { name: "profilePic", maxCount: 1 },
+    { name: "resume", maxCount: 1 },
+  ]),
+  updateProfile
+);
 
 export default router;

@@ -45,12 +45,9 @@ const userSchema = mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Company",
       },
-      profilePic: {
-        type: String,
-        default: "",
-      },
-      profilePicPublicId: {
-        type: String,
+      image: {
+        url: String,
+        public_id: String,
       },
     },
   },

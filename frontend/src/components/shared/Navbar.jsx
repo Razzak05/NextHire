@@ -7,11 +7,27 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "../ui/button";
 import { LogOut, User2 } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import axiosInstance from "@/utils/axios";
+import { useMutation } from "@tanstack/react-query";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const logout = async () => {
+    axiosInstance.post("/user/logout");
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      navigate("/login");
+      dispatch(logout());
+    },
+  });
 
   const getInitials = (fullName) => {
     const words = fullName.split(" ");
@@ -85,7 +101,11 @@ const Navbar = () => {
                   </div>
                   <div className="flex items-center gap-2 cursor-pointer">
                     <LogOut className="w-4 h-4" />
-                    <Button variant="link" className="p-0 h-auto text-sm">
+                    <Button
+                      onClick={() => mutate()}
+                      variant="link"
+                      className="p-0 h-auto text-sm"
+                    >
                       Logout
                     </Button>
                   </div>

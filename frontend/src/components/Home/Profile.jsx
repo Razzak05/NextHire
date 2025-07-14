@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { useSelector } from "react-redux";
@@ -7,10 +7,10 @@ import { Contact, Mail, Pen } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Label } from "../ui/label";
 import AppliedJobTable from "../Job/AppliedJobTable";
+import UpdateProfileDialog from "./UpdateProfileDialog";
 
 const Profile = () => {
-  const skills = ["Javascript", "React", "Node js"];
-  const isResume = true;
+  const [open, setOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const getInitials = (name) => {
     const nameSplited = name.trim().split(" ");
@@ -25,7 +25,7 @@ const Profile = () => {
       <div className="flex justify-between">
         <div className="flex items-center gap-4">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={user.profile?.profilePic} />
+            <AvatarImage src={user.profile?.image?.url} />
             <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
           </Avatar>
           <div>
@@ -36,7 +36,11 @@ const Profile = () => {
             </p>
           </div>
         </div>
-        <Button className="text-right" variant="outline">
+        <Button
+          onClick={() => setOpen(true)}
+          className="text-right"
+          variant="outline"
+        >
           <Pen />
         </Button>
       </div>
@@ -47,27 +51,32 @@ const Profile = () => {
         </div>
         <div className="flex items-center gap-3 my-2">
           <Contact />
-          <span>{user.contact}</span>
+          <span>{user.phoneNumber}</span>
         </div>
       </div>
       <div className="my-5">
-        <h1>Skills</h1>
+        <h1 className="text-lg my-1.5">Skills</h1>
         <div className="flex items-center gap-1">
-          {skills.length > 0 ? (
-            skills.map((item, index) => <Badge key={index}>{item}</Badge>)
+          {user?.profile?.skills?.length > 0 ? (
+            user?.profile?.skills?.map((item, index) => (
+              <Badge className="text-sm" key={index}>
+                {item}
+              </Badge>
+            ))
           ) : (
             <span>NA</span>
           )}
         </div>
         <div className="grid w-full max-w-sm items-center pag-1.5">
           <Label className="text-md font-bold">Resume</Label>
-          {isResume ? (
+          {user.profile?.resume?.url ? (
             <a
               className="text-blue-500 w-full hover:underline cursor-pointer"
-              target="blank"
-              href="https://www.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={user.profile?.resume?.url}
             >
-              google
+              View Resume
             </a>
           ) : (
             <span>NA</span>
@@ -79,6 +88,7 @@ const Profile = () => {
         {/* Application table */}
         <AppliedJobTable />
       </div>
+      <UpdateProfileDialog open={open} setOpen={setOpen} />
     </div>
   );
 };

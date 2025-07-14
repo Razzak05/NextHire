@@ -17,19 +17,25 @@ export const Register = async (req, res) => {
       return res.status(400).json("User already Exists !");
     }
 
-    const uploadResult = await cloudinaryHelper.uploadToCloudinary(
+    const parsedPhoneNumber = parseInt(phoneNumber);
+    const uploadedImage = await cloudinaryHelper.uploadToCloudinary(
       profilePic,
       "profile"
     );
+
     const newUser = new User({
       name,
       email,
-      phoneNumber,
+      phoneNumber: parsedPhoneNumber,
       role,
       password,
       profile: {
-        profilePic: uploadResult.url,
-        profilePicPublicId: uploadResult.public_id,
+        image: {
+          url: uploadedImage.url,
+          public_id: uploadedImage.public_id,
+        },
+        bio: "",
+        skills: [],
       },
     });
 
@@ -53,50 +59,52 @@ export const Register = async (req, res) => {
 export const Login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
+
+    // Validate required fields
     if (!email || !password || !role) {
-      return res.json("Require all the input field");
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    let user = await User.findOne({ email });
+    // Find user and include password for checking
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "User doesn't exists !" });
+      return res.status(400).json({ message: "User doesn't exist!" });
     }
 
+    // Match password
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
-      return res.status(400).json("Invalid Credentials");
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
 
+    // Role validation
     if (role !== user.role) {
-      return res
-        .status(400)
-        .json({ message: "Account is not authorized with the current role." });
+      return res.status(400).json({
+        message: "Account is not authorized with the current role.",
+      });
     }
 
+    // Generate JWT token
     const token = await generateToken(user._id, user.role);
+
+    // Send cookie with secure settings
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
       sameSite: "strict",
     });
 
-    user = {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      contact: user.phoneNumber,
-      profile: user.profile,
-    };
+    const { password: pwd, ...userData } = user._doc;
 
     res.status(200).json({
-      message: "Login Successful !",
-      user,
+      message: "Login Successful!",
+      user: userData,
       success: true,
     });
-  } catch (error) {
-    error(error, res);
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -113,35 +121,73 @@ export const Logout = async (req, res) => {
       .status(200)
       .json({ message: "Logged Out Successfully !", success: true });
   } catch (error) {
-    error(error, res);
+    handleError(error, res);
   }
 };
 
 export const updateProfile = async (req, res) => {
   try {
     const { name, email, phoneNumber, bio, skills } = req.body;
-    const skillsArray = skills?.split(",");
+    const profilePic = req.files?.profilePic?.[0];
+    const resume = req.files?.resume?.[0];
+    const skillsArray = skills?.split(",").map((s) => s.trim());
     const userId = req.user._id;
-    let user = await User.findById(userId);
 
+    let user = await User.findById(userId);
     if (!user) {
       return res.status(400).json({
-        message: "user not found !",
+        message: "User not found!",
         success: false,
       });
     }
 
-    // update data
     if (name) user.name = name;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
     if (skills) user.profile.skills = skillsArray;
 
-    // resume comes later here...
+    if (profilePic) {
+      const uploadedImage = await cloudinaryHelper.uploadToCloudinary(
+        profilePic,
+        "profile"
+      );
+
+      // Optional: delete previous profilePic if stored
+      if (user.profile.image?.public_id) {
+        await cloudinaryHelper.deleteFromCloudinary(
+          user.profile.image.public_id
+        );
+      }
+
+      user.profile.image = {
+        url: uploadedImage.url,
+        public_id: uploadedImage.public_id,
+      };
+    }
+
+    if (resume) {
+      const uploadedResume = await cloudinaryHelper.uploadToCloudinary(
+        resume,
+        "resume"
+      );
+
+      // Optional: delete old resume if exists
+      if (user.profile.resume?.public_id) {
+        await cloudinaryHelper.deleteFromCloudinary(
+          user.profile.resume.public_id
+        );
+      }
+
+      user.profile.resume = {
+        url: uploadedResume.url,
+        public_id: uploadedResume.public_id,
+      };
+    }
+
     await user.save();
 
-    user = {
+    const safeUser = {
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -149,12 +195,17 @@ export const updateProfile = async (req, res) => {
       role: user.role,
       profile: user.profile,
     };
+
     return res.status(200).json({
-      message: "Profile updated successfully !",
-      user,
+      message: "Profile updated successfully!",
+      user: safeUser,
       success: true,
     });
   } catch (error) {
-    handleError(error, res);
+    console.error(error);
+    return res.status(500).json({
+      message: "Server error while updating profile",
+      success: false,
+    });
   }
 };

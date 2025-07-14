@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
+import axiosInstance from "@/utils/axios";
 
 const Register = () => {
   const {
@@ -19,7 +19,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   const registerUser = async (formData) => {
-    const response = await axios.post("/user/register", formData);
+    const response = await axiosInstance.post("/user/register", formData);
     return response;
   };
 
@@ -31,7 +31,7 @@ const Register = () => {
       reset();
     },
     onError: (error) => {
-      toast.error(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Registration failed !");
     },
   });
 
@@ -39,11 +39,11 @@ const Register = () => {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("email", data.email);
-    formData.append("phoneNumber", data.phone);
+    formData.append("phoneNumber", data.phoneNumber);
     formData.append("password", data.password);
     formData.append("role", data.role);
     if (data.profilePic?.length > 0) {
-      formData.append("profilePic", data.profilePic[0]); // file input is an array
+      formData.append("profilePic", data.profilePic[0]);
     }
     mutate(formData);
   };
@@ -55,7 +55,6 @@ const Register = () => {
         className="w-1/2 border border-gray-200 rounded-md p-4 my-5"
       >
         <h1 className="font-bold text-xl mb-5">Sign Up</h1>
-
         <div>
           <Label className="text-sm mb-2">Full Name</Label>
           <Input
@@ -68,7 +67,6 @@ const Register = () => {
             <p className="text-red-500 text-sm">{errors.name.message}</p>
           )}
         </div>
-
         <div>
           <Label className="text-sm mb-2">Email</Label>
           <Input
@@ -93,12 +91,20 @@ const Register = () => {
           <Input
             type="tel"
             className="mb-3"
-            {...register("phone", {
+            {...register("phoneNumber", {
               required: "Phone number is required",
+              pattern: {
+                value: /^[0-9]{10,15}$/,
+                message: "Phone number must be 10-15 digits",
+              },
+              maxLength: {
+                value: 10,
+                message: "Enter 10 digit phone number",
+              },
             })}
           />
-          {errors.phone && (
-            <p className="text-red-500 text-sm">{errors.phone.message}</p>
+          {errors.phoneNumber && (
+            <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>
           )}
         </div>
 
@@ -119,7 +125,6 @@ const Register = () => {
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
         </div>
-
         <div className="flex items-center gap-6 my-4">
           <div className="flex items-center gap-2">
             <Input
@@ -145,7 +150,6 @@ const Register = () => {
         {errors.role && (
           <p className="text-red-500 text-sm">Role is required</p>
         )}
-
         <div className="flex items-center gap-2">
           <Label>Profile Picture</Label>
           <Input
@@ -160,11 +164,9 @@ const Register = () => {
         {errors.profilePic && (
           <p className="text-red-500 text-sm">{errors.profilePic.message}</p>
         )}
-
         <Button type="submit" className="w-full my-4" disabled={isPending}>
           {isPending ? "Signing Up..." : "Sign Up"}
         </Button>
-
         <span className="text-sm">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-600">
