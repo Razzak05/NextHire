@@ -36,10 +36,9 @@ const userSchema = mongoose.Schema(
         },
       ],
       resume: {
-        type: String,
-      },
-      resumeOriginalName: {
-        type: String,
+        url: String,
+        public_id: String,
+        originalName: String,
       },
       company: {
         type: mongoose.Schema.Types.ObjectId,

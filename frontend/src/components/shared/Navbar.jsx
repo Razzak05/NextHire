@@ -85,9 +85,9 @@ const Navbar = () => {
                     <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-medium">Username</h4>
+                    <h4 className="font-medium">{user.name}</h4>
                     <p className="text-sm text-muted-foreground">
-                      Lorem ipsum dolor sit amet
+                      {user.profile.bio}
                     </p>
                   </div>
                 </div>

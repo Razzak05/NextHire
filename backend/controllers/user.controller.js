@@ -2,6 +2,7 @@ import { handleError } from "../utils/error.js";
 import User from "../models/user.model.js";
 import generateToken from "../utils/token.js";
 import cloudinaryHelper from "../utils/cloudinaryHelper.js";
+import getDataUri from "../utils/getDataUri.js";
 
 export const Register = async (req, res) => {
   try {
@@ -167,6 +168,7 @@ export const updateProfile = async (req, res) => {
     }
 
     if (resume) {
+      const resumeUri = getDataUri(resume);
       const uploadedResume = await cloudinaryHelper.uploadToCloudinary(
         resume,
         "resume"
@@ -182,8 +184,11 @@ export const updateProfile = async (req, res) => {
       user.profile.resume = {
         url: uploadedResume.url,
         public_id: uploadedResume.public_id,
+        originalName: resume.originalname,
       };
     }
+
+    console.log("Resume url: ", user?.profile?.resume?.url);
 
     await user.save();
 

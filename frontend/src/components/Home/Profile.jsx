@@ -30,10 +30,7 @@ const Profile = () => {
           </Avatar>
           <div>
             <h1 className="font-medium text-xl">{user.name}</h1>
-            <p>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-              Laboriosam, quam?
-            </p>
+            <p>{user.profile?.bio}</p>
           </div>
         </div>
         <Button
@@ -76,7 +73,7 @@ const Profile = () => {
               rel="noopener noreferrer"
               href={user.profile?.resume?.url}
             >
-              View Resume
+              {user.profile?.resume?.originalName}
             </a>
           ) : (
             <span>NA</span>

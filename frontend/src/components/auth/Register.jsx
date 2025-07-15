@@ -91,15 +91,12 @@ const Register = () => {
           <Input
             type="tel"
             className="mb-3"
+            maxLength={15} // Prevent more than 15 digits
             {...register("phoneNumber", {
               required: "Phone number is required",
               pattern: {
-                value: /^[0-9]{10,15}$/,
+                value: /^[0-9]{10,15}$/, // Allow 10-15 digits
                 message: "Phone number must be 10-15 digits",
-              },
-              maxLength: {
-                value: 10,
-                message: "Enter 10 digit phone number",
               },
             })}
           />
