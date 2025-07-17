@@ -37,7 +37,7 @@ const userSchema = mongoose.Schema(
       ],
       resume: {
         url: String,
-        public_id: String,
+        fileName: String,
         originalName: String,
       },
       company: {

@@ -2,7 +2,7 @@ import { handleError } from "../utils/error.js";
 import User from "../models/user.model.js";
 import generateToken from "../utils/token.js";
 import cloudinaryHelper from "../utils/cloudinaryHelper.js";
-import getDataUri from "../utils/getDataUri.js";
+import { uploadToGCS, deleteFromGCS } from "../utils/googleCloudHelper.js";
 
 export const Register = async (req, res) => {
   try {
@@ -142,19 +142,21 @@ export const updateProfile = async (req, res) => {
       });
     }
 
+    // Update basic user fields
     if (name) user.name = name;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
     if (skills) user.profile.skills = skillsArray;
 
+    // Handle profile picture upload (using Cloudinary)
     if (profilePic) {
       const uploadedImage = await cloudinaryHelper.uploadToCloudinary(
         profilePic,
         "profile"
       );
 
-      // Optional: delete previous profilePic if stored
+      // Delete previous profilePic if stored
       if (user.profile.image?.public_id) {
         await cloudinaryHelper.deleteFromCloudinary(
           user.profile.image.public_id
@@ -167,50 +169,36 @@ export const updateProfile = async (req, res) => {
       };
     }
 
+    // Handle resume upload
     if (resume) {
-      const resumeUri = getDataUri(resume);
-      const uploadedResume = await cloudinaryHelper.uploadToCloudinary(
-        resume,
-        "resume"
-      );
+      try {
+        const uploadedResume = await uploadToGCS(resume, "resumes");
 
-      // Optional: delete old resume if exists
-      if (user.profile.resume?.public_id) {
-        await cloudinaryHelper.deleteFromCloudinary(
-          user.profile.resume.public_id
-        );
+        // Delete previous resume if exists
+        if (user.profile.resume?.fileName) {
+          await deleteFromGCS(user.profile.resume.fileName);
+        }
+
+        user.profile.resume = {
+          url: uploadedResume.url,
+          fileName: uploadedResume.fileName,
+          originalName: uploadedResume.originalName,
+        };
+      } catch (error) {
+        console.error("Error uploading resume:", error);
+        return res.status(500).json({
+          message: "Error uploading resume",
+          success: false,
+        });
       }
-
-      user.profile.resume = {
-        url: uploadedResume.url,
-        public_id: uploadedResume.public_id,
-        originalName: resume.originalname,
-      };
     }
-
-    console.log("Resume url: ", user?.profile?.resume?.url);
-
     await user.save();
-
-    const safeUser = {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      role: user.role,
-      profile: user.profile,
-    };
 
     return res.status(200).json({
       message: "Profile updated successfully!",
-      user: safeUser,
       success: true,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      message: "Server error while updating profile",
-      success: false,
-    });
+    handleError(error, res);
   }
 };
