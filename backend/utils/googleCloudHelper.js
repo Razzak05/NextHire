@@ -1,6 +1,7 @@
 import { Storage } from "@google-cloud/storage";
 import streamifier from "streamifier";
 
+// Initialize Google Cloud Storage
 const storage = new Storage({
   projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
   keyFilename: process.env.GOOGLE_CLOUD_KEY_FILE,
@@ -8,6 +9,7 @@ const storage = new Storage({
 
 const bucket = storage.bucket(process.env.GOOGLE_CLOUD_BUCKET_NAME);
 
+// Upload file to Google Cloud Storage
 export const uploadToGCS = async (file, folder) => {
   const fileName = `${folder}/${Date.now()}-${file.originalname}`;
   const gcsFile = bucket.file(fileName);
@@ -37,15 +39,16 @@ export const uploadToGCS = async (file, folder) => {
   });
 };
 
+// Delete file from Google Cloud Storage
 export const deleteFromGCS = async (fileName) => {
   const file = bucket.file(fileName);
   try {
     await file.delete();
     return { message: "File deleted successfully" };
-  } catch (err) {
-    if (err.code === 404) {
+  } catch (error) {
+    if (error.code === 404) {
       return { message: "File not found, nothing to delete" };
     }
-    throw err;
+    throw error;
   }
 };
