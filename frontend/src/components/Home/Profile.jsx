@@ -73,7 +73,7 @@ const Profile = () => {
               rel="noopener noreferrer"
               href={user.profile?.resume?.url}
             >
-              {user.profile?.resume?.originalName}
+              {user.profile?.resume?.originalName || "Resume"}
             </a>
           ) : (
             <span>NA</span>

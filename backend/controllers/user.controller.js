@@ -184,6 +184,15 @@ export const updateProfile = async (req, res) => {
           fileName: uploadedResume.fileName,
           originalName: uploadedResume.originalName,
         };
+
+        const updatedUser = user.toObject();
+        delete updatedUser.password;
+
+        return res.status(200).json({
+          message: "Profile updated successfully!",
+          success: true,
+          user: updatedUser,
+        });
       } catch (error) {
         console.error("Error uploading resume:", error);
         return res.status(500).json({

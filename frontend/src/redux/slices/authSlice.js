@@ -18,8 +18,8 @@ const authSlice = createSlice({
         ...state.user,
         ...action.payload,
         profile: {
-          ...state.user.profile,
-          ...action.payload.profile,
+          ...state.user?.profile,
+          ...action.payload?.profile,
         },
       };
     },
