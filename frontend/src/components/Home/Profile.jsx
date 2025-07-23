@@ -8,18 +8,12 @@ import { Badge } from "../ui/badge";
 import { Label } from "../ui/label";
 import AppliedJobTable from "../Job/AppliedJobTable";
 import UpdateProfileDialog from "./UpdateProfileDialog";
+import getInitials from "@/utils/getInitials";
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
-  const getInitials = (name) => {
-    const nameSplited = name.trim().split(" ");
-    const initials = nameSplited
-      .slice(0, 2)
-      .map((name) => name[0].toUpperCase())
-      .join("");
-    return initials;
-  };
+
   return (
     <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-8">
       <div className="flex justify-between">

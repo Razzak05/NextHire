@@ -1,6 +1,7 @@
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import getDaysAgo from "@/utils/getDaysAgo";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Bookmark } from "lucide-react";
 import React from "react";
@@ -11,9 +12,9 @@ const Job = ({ job }) => {
   return (
     <div className="p-5 rounded-md shadow-md bg-white border border-gray-200">
       <div className="flex items-center justify-between text-sm text-gray-500">
-        <span className="text-sm text-gray-500">{`${new Date(
-          job?.createdAt
-        ).getDate()} days ago`}</span>
+        <span className="text-sm text-gray-500">
+          {getDaysAgo(job?.createdAt)}
+        </span>
         <Button variant="outline" size="icon" className="rounded-full">
           <Bookmark className="w-4 h-4" />
         </Button>

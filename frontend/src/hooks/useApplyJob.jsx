@@ -17,7 +17,7 @@ const useApplyJob = (id) => {
     mutationFn: applyJob,
     onSuccess: (data) => {
       toast.success(data.message || "Applied successfully!");
-      queryClient.invalidateQueries(["job", id]); // Refresh job data (especially applications)
+      queryClient.invalidateQueries({ queryKey: ["job", id] });
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || "Something went wrong");

@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "@/utils/axios";
 import { useMutation } from "@tanstack/react-query";
+import getInitials from "@/utils/getInitials";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -28,15 +29,6 @@ const Navbar = () => {
       dispatch(logout());
     },
   });
-
-  const getInitials = (fullName) => {
-    const words = fullName.split(" ");
-    const initials = words
-      .slice(0, 2)
-      .map((name) => name[0].toUpperCase())
-      .join("");
-    return initials;
-  };
 
   return (
     <div className="bg-white">

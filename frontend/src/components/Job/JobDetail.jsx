@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useGetJobById from "@/hooks/useGetJobById";
 import useApplyJob from "@/hooks/useApplyJob";
+import getDaysAgo from "@/utils/getDaysAgo";
 
 const JobDetail = () => {
   const { id } = useParams();
@@ -14,16 +15,19 @@ const JobDetail = () => {
 
   const isApplied =
     user &&
-    job?.applications?.some((application) => application.applicant === user.id);
+    job?.applications?.some(
+      (application) =>
+        application.applicant?.toString() === user._id?.toString()
+    );
 
   const handleApplyJob = () => {
-    if (!isApplied) {
+    if (!isApplied && !isPending) {
       apply();
     }
   };
 
-  if (isLoading) return <p>Loading job details...</p>;
-  if (error) return <p>Failed to load job: {error.message}</p>;
+  if (isLoading) return <div>Loading job details...</div>;
+  if (error) return <div>Failed to load job: {error.message}</div>;
 
   return (
     <div className="max-w-7xl mx-auto my-10">
@@ -32,24 +36,26 @@ const JobDetail = () => {
           <h1 className="font-bold text-xl">{job?.title}</h1>
           <div className="flex items-center gap-2 mt-4">
             <Badge className="text-blue-700 font-bold" variant="ghost">
-              {job.position} Positions
+              {job?.position} Positions
             </Badge>
             <Badge className="text-[#F83002] font-bold" variant="ghost">
-              {job.jobType}
+              {job?.jobType}
             </Badge>
             <Badge className="text-[#7209b7] font-bold" variant="ghost">
-              {job.salary}
+              {job?.salary}
             </Badge>
           </div>
         </div>
 
         {user && (
           <Button
-            disabled={isApplied || isPending}
             onClick={handleApplyJob}
+            disabled={isApplied || isPending}
             className={`rounded-lg ${
               isApplied
                 ? "bg-gray-600 cursor-not-allowed"
+                : isPending
+                ? "bg-gray-400 cursor-not-allowed"
                 : "bg-[#7209b7] hover:bg-[#5f32ad]"
             }`}
           >
@@ -63,46 +69,54 @@ const JobDetail = () => {
       </div>
 
       <h1 className="border-b-2 border-b-gray-300 font-medium py-4">
-        {job.description}
+        {job?.description}
       </h1>
 
       <div className="my-4">
         <h1 className="font-bold my-1">
           Role:{" "}
-          <span className="pl-4 font-normal text-gray-800">{job.title}</span>
+          <span className="pl-4 font-normal text-gray-800">{job?.title}</span>
         </h1>
+
         <h1 className="font-bold my-1">
           Location:{" "}
-          <span className="pl-4 font-normal text-gray-800">{job.location}</span>
+          <span className="pl-4 font-normal text-gray-800">
+            {job?.location}
+          </span>
         </h1>
+
         <h1 className="font-bold my-1">
           Description:{" "}
           <span className="pl-4 font-normal text-gray-800">
-            {job.description}
+            {job?.description}
           </span>
         </h1>
+
         <h1 className="font-bold my-1">
           Experience:{" "}
           <span className="pl-4 font-normal text-gray-800">
-            {job.experienceLevel}
+            {job?.experienceLevel}
           </span>
         </h1>
+
         <h1 className="font-bold my-1">
           Salary:{" "}
           <span className="pl-4 font-normal text-gray-800">
-            {job.salary} LPA
+            {job?.salary} LPA
           </span>
         </h1>
+
         <h1 className="font-bold my-1">
           Total Applicants:{" "}
           <span className="pl-4 font-normal text-gray-800">
-            {job?.applications?.length}
+            {job?.applications?.length || 0}
           </span>
         </h1>
+
         <h1 className="font-bold my-1">
           Posted Date:{" "}
           <span className="pl-4 font-normal text-gray-800">
-            {`${new Date(job?.createdAt).getDate()} days ago`}
+            {getDaysAgo(job?.createdAt)}
           </span>
         </h1>
       </div>
