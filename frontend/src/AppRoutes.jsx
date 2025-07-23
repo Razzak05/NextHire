@@ -23,7 +23,7 @@ const AppRoutes = () => {
       <Route element={<CommonLayout />}>
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
-        <Route path="/description:id" element={<JobDetail />} />
+        <Route path="description/:id" element={<JobDetail />} />
       </Route>
 
       {/* protected user pages */}

@@ -1,6 +1,5 @@
 import Application from "../models/application.model.js";
 import Job from "../models/job.model.js";
-import User from "../models/user.model.js";
 import { handleError } from "../utils/error.js";
 
 // Apply to a job
@@ -41,6 +40,7 @@ export const applyJob = async (req, res) => {
 
     return res.status(200).json({
       message: "Applied to job successfully!",
+      job,
       success: true,
     });
   } catch (error) {
