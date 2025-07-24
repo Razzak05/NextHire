@@ -12,21 +12,22 @@ import { useDispatch, useSelector } from "react-redux";
 import axiosInstance from "@/utils/axios";
 import { useMutation } from "@tanstack/react-query";
 import getInitials from "@/utils/getInitials";
+import { logout } from "@/redux/slices/authSlice";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const logout = async () => {
-    axiosInstance.post("/user/logout");
+  const Logout = async () => {
+    return await axiosInstance.post("/user/logout");
   };
 
   const { mutate } = useMutation({
-    mutationFn: logout,
+    mutationFn: Logout,
     onSuccess: () => {
-      navigate("/login");
       dispatch(logout());
+      navigate("/login");
     },
   });
 
@@ -40,15 +41,28 @@ const Navbar = () => {
         </div>
         <div className="flex items-center gap-5">
           <ul className="flex font-medium items-center gap-5">
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/jobs">Jobs</Link>
-            </li>
-            <li>
-              <Link to="/browse">Browse</Link>
-            </li>
+            {user && user.role === "recruiter" ? (
+              <>
+                <li>
+                  <Link to="/admin/companies">Companies</Link>
+                </li>
+                <li>
+                  <Link to="/admin/jobs">Companies</Link>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link to="/">Home</Link>
+                </li>
+                <li>
+                  <Link to="/jobs">Jobs</Link>
+                </li>
+                <li>
+                  <Link to="/browse">Browse</Link>
+                </li>
+              </>
+            )}
           </ul>
 
           {!user ? (
@@ -85,12 +99,14 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex flex-col gap-2 text-gray-600">
-                  <div className="flex items-center gap-2 cursor-pointer">
-                    <User2 className="w-4 h-4" />
-                    <Button variant="link" className="p-0 h-auto text-sm">
-                      <Link to="/profile">View Profile</Link>
-                    </Button>
-                  </div>
+                  {user && user.role === "student" && (
+                    <div className="flex items-center gap-2 cursor-pointer">
+                      <User2 className="w-4 h-4" />
+                      <Button variant="link" className="p-0 h-auto text-sm">
+                        <Link to="/profile">View Profile</Link>
+                      </Button>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 cursor-pointer">
                     <LogOut className="w-4 h-4" />
                     <Button
