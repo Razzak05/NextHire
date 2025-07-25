@@ -2,6 +2,7 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import authSlice from "./slices/authSlice";
 import jobSlice from "./slices/jobSlice";
+import companySlice from "./slices/companySlice";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import { persistStore, persistReducer } from "redux-persist";
 
@@ -9,13 +10,14 @@ import { persistStore, persistReducer } from "redux-persist";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth", "job"], // Persist only auth and job slices
+  whitelist: ["auth", "job", "company"],
 };
 
 // --- Combine Reducers ---
 const rootReducer = combineReducers({
   auth: authSlice,
   job: jobSlice,
+  company: companySlice,
 });
 
 // --- Wrap with persistReducer ---

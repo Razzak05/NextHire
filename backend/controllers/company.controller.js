@@ -77,7 +77,7 @@ export const getCompanyById = async (req, res) => {
 
 export const updateCompany = async (req, res) => {
   try {
-    const { name, description, website, logo } = req.body;
+    const updates = req.body;
     const companyId = req.params.id;
     const company = await Company.findById(companyId);
     if (!company) {
@@ -85,13 +85,14 @@ export const updateCompany = async (req, res) => {
         .status(404)
         .json({ message: "Company does not exists!", success: false });
     }
-    if (name) company.name = name;
-    if (description) company.description = description;
-    if (website) company.website = website;
-    if (logo) company.logo = logo;
 
+    const updatedCompany = await Company.findByIdAndUpdate(
+      id,
+      { ...updates },
+      { new: true }
+    );
     return res.status(201).json({
-      company,
+      company: updatedCompany,
       success: true,
     });
   } catch (error) {

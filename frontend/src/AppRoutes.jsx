@@ -16,6 +16,8 @@ import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import ProtectRoute from "./protect/ProtectRoute";
 import PublicRoute from "./protect/PublicRoute";
+import CompanyCreate from "./components/admin/CompanyCreate";
+import CompanySetup from "./components/admin/CompanySetup";
 
 const AppRoutes = () => {
   return (
@@ -55,6 +57,8 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<Companies />} />
+        <Route path="companies/create" element={<CompanyCreate />} />
+        <Route path="companies/:id" element={<CompanySetup />} />
       </Route>
     </Routes>
   );
