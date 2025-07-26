@@ -14,7 +14,7 @@ import { Edit2, MoreHorizontal, Loader2 } from "lucide-react";
 import useGetAllCompanies from "@/hooks/useGetAllCompanies";
 import { useNavigate } from "react-router-dom";
 
-const CompaniesTable = ({ filter }) => {
+const AdminJobsTable = ({ filter }) => {
   const { data: companies, isLoading, isError } = useGetAllCompanies();
   const navigate = useNavigate();
 
@@ -106,4 +106,4 @@ const CompaniesTable = ({ filter }) => {
   );
 };
 
-export default CompaniesTable;
+export default AdminJobsTable;

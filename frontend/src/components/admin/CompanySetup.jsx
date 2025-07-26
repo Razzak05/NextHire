@@ -4,40 +4,17 @@ import { ArrowLeft } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
-import axiosInstance from "@/utils/axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useDispatch, useSelector } from "react-redux";
-import { setSingleCompany } from "@/redux/slices/companySlice";
+import { useSelector } from "react-redux";
+import useUpdateCompany from "@/hooks/useUpdateCompany";
 
 const CompanySetup = () => {
   const { register, handleSubmit, reset } = useForm();
-
-  const navigate = useNavigate();
   const { id } = useParams();
-  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { singleCompany } = useSelector((store) => store.company);
-  const dispatch = useDispatch();
 
-  const updateCompanyInfo = async (formData) => {
-    const response = await axiosInstance.put(`/company/update/${id}`, formData);
-    return response.data;
-  };
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: updateCompanyInfo,
-    onSuccess: (data) => {
-      dispatch(setSingleCompany(data.company));
-      toast.success(data?.message || "Company Setup Successfull !");
-      queryClient.invalidateQueries({ queryKey: ["companies", id] });
-      reset();
-      navigate("/");
-    },
-    onError: (error) => {
-      toast.error(error?.response?.data?.message || "Update failed.");
-    },
-  });
+  const { mutate, isPending } = useUpdateCompany(id, reset); // ← use custom hook
 
   const onSubmit = (data) => {
     const formData = new FormData();
@@ -50,6 +27,7 @@ const CompanySetup = () => {
     }
     mutate(formData);
   };
+
   return (
     <div className="max-w-xl mx-auto my-10">
       <form onSubmit={handleSubmit(onSubmit)}>

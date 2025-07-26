@@ -11,7 +11,7 @@ import upload from "../middlewares/multer.js";
 const router = express.Router();
 
 router.post("/register", protect, recruiter, registerCompany);
-router.get("/companies", protect, recruiter, getCompanies);
+router.get("/get-all-companies", protect, recruiter, getCompanies);
 router.get("/:id", protect, recruiter, getCompanyById);
 router.put(
   "/update/:id",

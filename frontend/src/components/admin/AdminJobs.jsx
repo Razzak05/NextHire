@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import CompaniesTable from "./CompaniesTable";
 import { useNavigate } from "react-router-dom";
+import AdminJobsTable from "./AdminJobsTable";
 
-const Companies = () => {
+const AdminJobs = () => {
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
 
@@ -17,13 +17,11 @@ const Companies = () => {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
-        <Button onClick={() => navigate("companies/create")}>
-          New Company
-        </Button>
+        <Button onClick={() => navigate("companies/create")}>Post Job</Button>
       </div>
-      <CompaniesTable filter={filter} />
+      <AdminJobsTable filter={filter} />
     </div>
   );
 };
 
-export default Companies;
+export default AdminJobs;
