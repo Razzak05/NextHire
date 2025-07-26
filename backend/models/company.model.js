@@ -14,8 +14,12 @@ const companySchema = mongoose.Schema(
     website: {
       type: String,
     },
-    logo: {
+    location: {
       type: String,
+    },
+    logo: {
+      url: String,
+      public_id: String,
     },
     creator: {
       type: mongoose.Schema.Types.ObjectId,

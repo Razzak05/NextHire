@@ -15,6 +15,12 @@ const uploadConfigs = {
     maxSize: 5 * 1024 * 1024,
     resource_type: "auto",
   },
+  logo: {
+    folder: "Nexthire/logos",
+    allowedFormats: ["png", "jpeg", "jpg", "webp"],
+    maxSize: 5 * 1024 * 1024,
+    resource_type: "image",
+  },
 };
 
 const uploadToCloudinary = async (file, type) => {

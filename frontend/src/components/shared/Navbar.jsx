@@ -47,7 +47,7 @@ const Navbar = () => {
                   <Link to="/admin/companies">Companies</Link>
                 </li>
                 <li>
-                  <Link to="/admin/jobs">Companies</Link>
+                  <Link to="/admin/jobs">Jobs</Link>
                 </li>
               </>
             ) : (

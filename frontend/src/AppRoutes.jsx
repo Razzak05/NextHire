@@ -58,7 +58,7 @@ const AppRoutes = () => {
       >
         <Route index element={<Companies />} />
         <Route path="companies/create" element={<CompanyCreate />} />
-        <Route path="companies/:id" element={<CompanySetup />} />
+        <Route path="companies/update/:id" element={<CompanySetup />} />
       </Route>
     </Routes>
   );
