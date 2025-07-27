@@ -29,6 +29,10 @@ const jobSchema = mongoose.Schema(
       required: true,
     },
     position: {
+      type: String,
+      required: true,
+    },
+    vacancies: {
       type: Number,
       required: true,
     },

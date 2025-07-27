@@ -17,7 +17,7 @@ const AdminJobs = () => {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
-        <Button onClick={() => navigate("companies/create")}>Post Job</Button>
+        <Button onClick={() => navigate("create")}>Post Job</Button>
       </div>
       <AdminJobsTable filter={filter} />
     </div>

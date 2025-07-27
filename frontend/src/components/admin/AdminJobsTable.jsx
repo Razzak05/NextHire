@@ -1,3 +1,4 @@
+// src/components/AdminJobsTable.jsx
 import React from "react";
 import {
   Table,
@@ -11,16 +12,16 @@ import {
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Edit2, MoreHorizontal, Loader2 } from "lucide-react";
-import useGetAllCompanies from "@/hooks/useGetAllCompanies";
 import { useNavigate } from "react-router-dom";
+import useGetAllAdminJobs from "@/hooks/useGetAllAdminJobs";
 
 const AdminJobsTable = ({ filter }) => {
-  const { data: companies, isLoading, isError } = useGetAllCompanies();
+  const { data: jobs, isLoading, isError } = useGetAllAdminJobs();
   const navigate = useNavigate();
 
-  const filteredCompanies =
-    companies?.filter((company) =>
-      company.name.toLowerCase().includes(filter.toLowerCase())
+  const filteredJobs =
+    jobs?.filter((job) =>
+      job.title.toLowerCase().includes(filter.toLowerCase())
     ) || [];
 
   if (isLoading) {
@@ -33,43 +34,42 @@ const AdminJobsTable = ({ filter }) => {
 
   if (isError) {
     return (
-      <div className="py-8 text-center text-red-500">
-        Failed to load companies
-      </div>
+      <div className="py-8 text-center text-red-500">Failed to load jobs</div>
     );
   }
 
   return (
     <div>
       <Table>
-        <TableCaption>
-          A list of your recently registered companies
-        </TableCaption>
+        <TableCaption>A list of your recently posted jobs</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Logo</TableHead>
-            <TableHead>Name</TableHead>
+            <TableHead>Company Name</TableHead>
+            <TableHead>Role</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredCompanies.length > 0 ? (
-            filteredCompanies.map((company) => (
-              <TableRow key={company._id}>
+          {filteredJobs.length > 0 ? (
+            filteredJobs.map((job) => (
+              <TableRow key={job._id}>
                 <TableCell>
                   <Avatar>
                     <AvatarImage
                       src={
-                        company.logo?.url || "https://via.placeholder.com/40"
+                        job.company?.logo?.url ||
+                        "https://via.placeholder.com/40"
                       }
-                      alt={company.name}
+                      alt={job.company?.name || "Company"}
                     />
                   </Avatar>
                 </TableCell>
-                <TableCell>{company.name}</TableCell>
+                <TableCell>{job.company?.name}</TableCell>
+                <TableCell>{job.title}</TableCell>
                 <TableCell>
-                  {new Date(company.createdAt).toLocaleDateString()}
+                  {new Date(job.createdAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
                   <Popover>
@@ -78,9 +78,7 @@ const AdminJobsTable = ({ filter }) => {
                     </PopoverTrigger>
                     <PopoverContent className="w-32 cursor-pointer">
                       <div
-                        onClick={() =>
-                          navigate(`companies/update/${company._id}`)
-                        }
+                        onClick={() => navigate(`jobs/update/${job._id}`)}
                         className="flex items-center gap-2 cursor-pointer"
                       >
                         <Edit2 className="w-4 h-4" />
@@ -93,10 +91,10 @@ const AdminJobsTable = ({ filter }) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4} className="text-center">
-                {companies?.length > 0
-                  ? "No companies match your search"
-                  : "No Companies Found."}
+              <TableCell colSpan={5} className="text-center">
+                {jobs?.length > 0
+                  ? "No jobs match your search"
+                  : "No Jobs Found."}
               </TableCell>
             </TableRow>
           )}
