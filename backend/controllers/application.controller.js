@@ -16,8 +16,9 @@ export const applyJob = async (req, res) => {
       });
     }
 
+    // Check if user already applied
     const existingApplication = await Application.findOne({
-      applicant: userId,
+      applicant: userId, // Use userId directly
       job: jobId,
     });
 
@@ -28,13 +29,15 @@ export const applyJob = async (req, res) => {
       });
     }
 
+    // Create new application with user ID
     const newApplication = new Application({
       job: jobId,
-      applicant: userId,
+      applicant: userId, // Store user ID, not full object
     });
 
     await newApplication.save();
 
+    // Push application ID to job
     job.applications.push(newApplication._id);
     await job.save();
 

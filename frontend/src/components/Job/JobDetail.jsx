@@ -10,10 +10,10 @@ import getDaysAgo from "@/utils/getDaysAgo";
 import { Loader2 } from "lucide-react";
 
 const JobDetail = () => {
-  const { id: jobId } = useParams();
+  const { id } = useParams();
   const { user } = useSelector((store) => store.auth);
-  const { data: job, isLoading, error } = useGetJobById(jobId);
-  const { apply, isPending } = useApplyJob();
+  const { data: job, isLoading, error } = useGetJobById(id);
+  const { apply, isPending } = useApplyJob(id);
 
   const isApplied =
     user &&
@@ -24,7 +24,7 @@ const JobDetail = () => {
 
   const handleApplyJob = () => {
     if (!isApplied && !isPending) {
-      apply({ jobId });
+      apply();
     }
   };
 

@@ -2,10 +2,10 @@ import axiosInstance from "@/utils/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const useApplyJob = () => {
+const useApplyJob = (jobId) => {
   const queryClient = useQueryClient();
 
-  const applyJob = async ({ jobId }) => {
+  const applyJob = async () => {
     const response = await axiosInstance.post(
       `/application/apply-job/${jobId}`
     );
@@ -14,9 +14,9 @@ const useApplyJob = () => {
 
   const { mutate: apply, isPending } = useMutation({
     mutationFn: applyJob,
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       toast.success(data.message || "Applied successfully!");
-      queryClient.invalidateQueries({ queryKey: ["job", variables.jobId] });
+      queryClient.invalidateQueries({ queryKey: ["job", jobId] });
     },
     onError: (err) => {
       toast.error(err.response?.data?.message || "Something went wrong");
