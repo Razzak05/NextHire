@@ -20,6 +20,7 @@ import CompanyCreate from "./components/admin/CompanyCreate";
 import CompanySetup from "./components/admin/CompanySetup";
 import AdminJobs from "./components/admin/AdminJobs";
 import PostJob from "./components/admin/PostJob";
+import Applicants from "./components/admin/Applicants";
 
 const AppRoutes = () => {
   return (
@@ -59,10 +60,12 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<Companies />} />
+
         <Route path="companies/create" element={<CompanyCreate />} />
         <Route path="companies/update/:id" element={<CompanySetup />} />
         <Route path="jobs" element={<AdminJobs />} />
         <Route path="jobs/create" element={<PostJob />} />
+        <Route path="jobs/:id/applicants" element={<Applicants />} />
       </Route>
     </Routes>
   );

@@ -23,12 +23,15 @@ const Job = ({ job }) => {
       <div className="flex gap-4 items-start mt-4">
         <Avatar className="w-12 h-12">
           <AvatarImage
-            src="https://www.shutterstock.com/image-vector/circle-line-simple-design-logo-600nw-2174926871.jpg"
+            src={
+              job.company?.logo?.url ||
+              "https://www.shutterstock.com/image-vector/circle-line-simple-design-logo-600nw-2174926871.jpg"
+            }
             alt="Company Logo"
           />
         </Avatar>
         <div className="flex-1">
-          <h2 className="font-semibold ">{job?.companyName}</h2>
+          <h2 className="font-semibold ">{job?.company?.name}</h2>
           <p className="text-sm text-gray-500">{job?.location}</p>
         </div>
       </div>
