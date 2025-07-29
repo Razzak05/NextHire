@@ -142,21 +142,20 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // Update basic user fields
+    // Basic fields
     if (name) user.name = name;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
     if (skills) user.profile.skills = skillsArray;
 
-    // Handle profile picture upload (using Cloudinary)
+    // Profile Pic Upload
     if (profilePic) {
       const uploadedImage = await cloudinaryHelper.uploadToCloudinary(
         profilePic,
         "profile"
       );
 
-      // Delete previous profilePic if stored
       if (user.profile.image?.public_id) {
         await cloudinaryHelper.deleteFromCloudinary(
           user.profile.image.public_id
@@ -169,12 +168,12 @@ export const updateProfile = async (req, res) => {
       };
     }
 
-    // Handle resume upload
+    // Resume Upload
     if (resume) {
       try {
         const uploadedResume = await uploadToGCS(resume, "resumes");
 
-        // Delete previous resume if exists
+        // Delete old resume
         if (user.profile.resume?.fileName) {
           await deleteFromGCS(user.profile.resume.fileName);
         }
@@ -184,30 +183,28 @@ export const updateProfile = async (req, res) => {
           fileName: uploadedResume.fileName,
           originalName: uploadedResume.originalName,
         };
-
-        const updatedUser = user.toObject();
-        delete updatedUser.password;
-
-        return res.status(200).json({
-          message: "Profile updated successfully!",
-          success: true,
-          user: updatedUser,
-        });
-      } catch (error) {
-        console.error("Error uploading resume:", error);
-        return res.status(500).json({
-          message: "Error uploading resume",
-          success: false,
-        });
+      } catch (err) {
+        console.error("Resume upload failed", err);
+        return res
+          .status(500)
+          .json({ message: "Resume upload failed", success: false });
       }
     }
-    await user.save();
+
+    await user.save(); // ✅ always save after changes
+
+    const updatedUser = user.toObject();
+    delete updatedUser.password;
 
     return res.status(200).json({
       message: "Profile updated successfully!",
       success: true,
+      user: updatedUser,
     });
-  } catch (error) {
-    handleError(error, res);
+  } catch (err) {
+    console.error("Profile update failed:", err);
+    return res
+      .status(500)
+      .json({ message: "Something went wrong", success: false });
   }
 };

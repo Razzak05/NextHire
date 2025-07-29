@@ -7,7 +7,7 @@ const useUpdateStatus = () => {
 
   return useMutation({
     mutationFn: ({ id, status }) =>
-      axiosInstance.put(`applicantion/status/${id}/update`, { status }),
+      axiosInstance.put(`application/status/${id}/update`, { status }),
     onSuccess: () => {
       toast.success("Status updated successfully!");
       queryClient.invalidateQueries(["applicants"]);

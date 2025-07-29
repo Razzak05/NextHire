@@ -6,7 +6,6 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Home from "./components/Home/Home";
 import Jobs from "./components/Job/Jobs.jsx";
-import Browse from "./components/browse/Browse";
 import Profile from "./components/Home/Profile";
 import JobDetail from "./components/Job/JobDetail";
 import Companies from "./components/admin/Companies";
@@ -21,6 +20,7 @@ import CompanySetup from "./components/admin/CompanySetup";
 import AdminJobs from "./components/admin/AdminJobs";
 import PostJob from "./components/admin/PostJob";
 import Applicants from "./components/admin/Applicants";
+import About from "./components/Home/About";
 
 const AppRoutes = () => {
   return (
@@ -36,7 +36,7 @@ const AppRoutes = () => {
       >
         <Route index element={<Home />} />
         <Route path="jobs" element={<Jobs />} />
-        <Route path="browse" element={<Browse />} />
+        <Route path="about" element={<About />} />
         <Route
           path="profile"
           element={

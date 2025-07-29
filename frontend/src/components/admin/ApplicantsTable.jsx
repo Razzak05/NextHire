@@ -11,16 +11,20 @@ import {
 } from "../ui/table";
 import {
   Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
-  SelectContent,
-  SelectItem,
-} from "../ui/select";
+} from "@/components/ui/select";
 
 import useUpdateStatus from "@/hooks/useUpdateStatus";
 import useGetAllApplicants from "@/hooks/useGetAllApplicants";
+import { Loader2 } from "lucide-react";
 
 const shortListingStatus = [
+  { label: "Pending", value: "pending" },
   { label: "Accepted", value: "accepted" },
   { label: "Rejected", value: "rejected" },
 ];
@@ -34,7 +38,12 @@ const ApplicantsTable = () => {
     mutate({ id, status: newStatus });
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading)
+    return (
+      <div className="w-12 h-12 animate-spin mx-auto">
+        <Loader2 />
+      </div>
+    );
 
   return (
     <div>
@@ -54,39 +63,46 @@ const ApplicantsTable = () => {
         <TableBody>
           {applicants.map((application) => (
             <TableRow key={application._id}>
-              <TableCell>{application.applicant?.fullName}</TableCell>
+              <TableCell>{application.applicant?.name}</TableCell>
               <TableCell>{application.applicant?.email}</TableCell>
-              <TableCell>{application.applicant?.contact}</TableCell>
+              <TableCell>{application.applicant?.phoneNumber}</TableCell>
               <TableCell>
                 <a
-                  href={application.resumeUrl}
+                  href={application.applicant?.profile?.resume?.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 underline"
+                  className="text-blue-600 underline cursor-pointer"
                 >
                   View Resume
                 </a>
               </TableCell>
               <TableCell>
-                {new Date(application.appliedAt).toLocaleDateString()}
+                {new Date(application.createdAt).toLocaleDateString()}
               </TableCell>
               <TableCell className="capitalize">{application.status}</TableCell>
               <TableCell>
                 <Select
-                  defaultValue={application.status}
+                  value={application.status.toLowerCase()}
                   onValueChange={(val) =>
                     handleStatusChange(application._id, val)
                   }
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pending" />
+                  <SelectTrigger className="capitalize">
+                    {application.status.toLowerCase()}
                   </SelectTrigger>
                   <SelectContent>
-                    {shortListingStatus.map((status) => (
-                      <SelectItem key={status.value} value={status.value}>
-                        {status.label}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                      <SelectLabel>Status</SelectLabel>
+                      {shortListingStatus.map((status) => (
+                        <SelectItem
+                          key={status.value}
+                          value={status.value}
+                          className="capitalize"
+                        >
+                          {status.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
               </TableCell>

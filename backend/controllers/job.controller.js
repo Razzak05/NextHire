@@ -59,25 +59,32 @@ export const createJob = async (req, res) => {
 
 export const getAllJobs = async (req, res) => {
   try {
-    const searchKeyword = req?.query?.keyword || "";
-    const query = {
+    const userId = req.user._id;
+    const {
+      search = "",
+      page = 1,
+      limit = 10,
+      sortBy = { createdAt: -1 },
+    } = req.query;
+
+    const filter = {
       $or: [
-        { title: { $regex: searchKeyword, $options: "i" } },
-        { description: { $regex: searchKeyword, $options: "i" } },
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
       ],
     };
-    const jobs = await Job.find(query)
-      .populate("company")
-      .sort({ createdAt: -1 });
-    if (!jobs) {
-      return res.status(404).json({
-        message: "Jobs not found !",
-        success: false,
-      });
-    }
-    return res.status(200).json({
+
+    const skip = Number(page - 1) * Number(limit);
+    const [jobs, totalCount] = await Promise.all([
+      job.find(filter).sort(sortBy).limit(Number(limit)),
+      Job.countDocuments(filter),
+    ]);
+
+    res.status(200).json({
       jobs,
-      success: true,
+      totalCount,
+      page: Number(page),
+      totalPages: Math.ceil(totalCount / Number(limit)),
     });
   } catch (error) {
     handleError(error, res);

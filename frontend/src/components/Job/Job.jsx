@@ -40,7 +40,7 @@ const Job = ({ job }) => {
         <h3 className="font-bold text-lg">{job?.title}</h3>
         <p className="text-sm text-gray-600 mt-1">{job?.description}</p>
       </div>
-      <div className="flex items-center gap-2 mt-4">
+      <div className="flex items-center gap-2 mt-4 flex-wrap">
         <Badge className="text-blue-700 font-medium" variant="ghost">
           {job?.position} Positions
         </Badge>
