@@ -1,27 +1,20 @@
-import axiosInstance from "@/utils/axios";
-import { useDispatch } from "react-redux";
-import { setAllJobs } from "@/redux/slices/jobSlice";
+import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
-// useGetAllJobs.js
-const useGetAllJobs = () => {
-  const dispatch = useDispatch();
-
+const useGetAllJobs = (params = {}) => {
   const fetchAllJobs = async () => {
-    const res = await axiosInstance.get(
-      `${import.meta.env.VITE_BACKEND_URL}/job/get-all-jobs`
+    const res = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/job/get-all-jobs`,
+      { params }
     );
-    const jobs = res.data.jobs;
-    dispatch(setAllJobs(jobs));
-    return jobs;
+    return res.data;
   };
 
-  const query = useQuery({
-    queryKey: ["allJobs"],
+  return useQuery({
+    queryKey: ["allJobs", params],
     queryFn: fetchAllJobs,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
-
-  return query;
 };
 
 export default useGetAllJobs;

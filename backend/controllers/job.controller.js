@@ -59,26 +59,110 @@ export const createJob = async (req, res) => {
 
 export const getAllJobs = async (req, res) => {
   try {
-    const userId = req.user._id;
     const {
       search = "",
+      location = "",
+      industry = "",
+      salary = "",
       page = 1,
       limit = 10,
-      sortBy = { createdAt: -1 },
+      sortBy = "createdAt",
+      sortOrder = -1,
     } = req.query;
 
-    const filter = {
-      $or: [
-        { title: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
-      ],
+    const skip = (Number(page) - 1) * Number(limit);
+    const sortObj = {};
+    sortObj[sortBy] = Number(sortOrder);
+
+    // Build salary filter
+    const salaryRanges = {
+      "0-40K": { min: 0, max: 40000 },
+      "41K-1 Lakh": { min: 41000, max: 100000 },
+      "1 Lakh - 5 Lakh": { min: 100000, max: 500000 },
     };
 
-    const skip = Number(page - 1) * Number(limit);
-    const [jobs, totalCount] = await Promise.all([
-      job.find(filter).sort(sortBy).limit(Number(limit)),
-      Job.countDocuments(filter),
+    // Create match stage
+    const matchStage = {
+      $match: {},
+    };
+
+    // Add search condition
+    if (search) {
+      matchStage.$match.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { jobType: { $regex: search, $options: "i" } },
+        // Fixed skills search - uses $elemMatch
+        { skills: { $elemMatch: { $regex: search, $options: "i" } } },
+        { "companyDetails.name": { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Add other filters
+    if (location) {
+      matchStage.$match.location = { $regex: location, $options: "i" };
+    }
+    if (industry) {
+      matchStage.$match.industry = { $regex: industry, $options: "i" };
+    }
+    if (salary && salaryRanges[salary]) {
+      matchStage.$match.salary = {
+        $gte: salaryRanges[salary].min,
+        $lte: salaryRanges[salary].max,
+      };
+    }
+
+    const pipeline = [
+      {
+        $lookup: {
+          from: "companies",
+          localField: "company",
+          foreignField: "_id",
+          as: "companyDetails",
+        },
+      },
+      { $unwind: "$companyDetails" },
+      matchStage, // Add the match stage here
+      { $sort: sortObj },
+      { $skip: skip },
+      { $limit: Number(limit) },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          salary: 1,
+          jobType: 1,
+          location: 1,
+          industry: 1,
+          createdAt: 1,
+          skills: 1,
+          company: "$companyDetails", // return full company info
+        },
+      },
+    ];
+
+    // Count pipeline without pagination stages
+    const countPipeline = [
+      {
+        $lookup: {
+          from: "companies",
+          localField: "company",
+          foreignField: "_id",
+          as: "companyDetails",
+        },
+      },
+      { $unwind: "$companyDetails" },
+      matchStage, // Same match conditions
+      { $count: "total" },
+    ];
+
+    const [jobs, totalCountResult] = await Promise.all([
+      Job.aggregate(pipeline),
+      Job.aggregate(countPipeline),
     ]);
+
+    const totalCount = totalCountResult[0]?.total || 0;
 
     res.status(200).json({
       jobs,
@@ -87,7 +171,8 @@ export const getAllJobs = async (req, res) => {
       totalPages: Math.ceil(totalCount / Number(limit)),
     });
   } catch (error) {
-    handleError(error, res);
+    console.error("Job fetch error:", error);
+    res.status(500).json({ message: "Server error", success: false });
   }
 };
 

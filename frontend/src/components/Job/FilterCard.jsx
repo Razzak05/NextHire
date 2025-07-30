@@ -1,15 +1,18 @@
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
 import React from "react";
+import { useSearchParams } from "react-router-dom";
 
-// Corrected typos in labels
 const filterData = [
   {
     filterType: "Location",
+    key: "location",
     array: ["Delhi NCR", "Bangalore", "Hyderabad", "Pune", "Mumbai"],
   },
   {
     filterType: "Industry",
+    key: "industry",
     array: [
       "Frontend Developer",
       "Backend Developer",
@@ -21,33 +24,52 @@ const filterData = [
   },
   {
     filterType: "Salary",
+    key: "salary",
     array: ["0-40K", "41K-1 Lakh", "1 Lakh - 5 Lakh"],
   },
 ];
 
 const FilterCard = () => {
-  return (
-    <div className="p-4 border rounded-lg shadow-md">
-      <h1 className="text-xl font-semibold">Filter Jobs</h1>
-      <hr className="mt-3 mb-4" />
+  const [searchParams, setSearchParams] = useSearchParams();
 
-      {filterData.map((data, index) => (
-        <div key={index} className="mb-6">
+  const handleFilterChange = (key, value) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set(key, value);
+    setSearchParams(newParams);
+  };
+
+  const handleClearFilters = () => {
+    setSearchParams();
+  };
+
+  return (
+    <div className="p-4 border rounded-lg shadow-md sticky top-4">
+      <div className="flex justify-between items-center mb-3">
+        <h1 className="text-xl font-semibold">Filter Jobs</h1>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleClearFilters}
+          className="text-sm text-gray-600"
+        >
+          Clear All
+        </Button>
+      </div>
+      <hr className="mb-4" />
+
+      {filterData.map((data) => (
+        <div key={data.key} className="mb-6">
           <h2 className="font-medium mb-2">{data.filterType}</h2>
-          <RadioGroup>
-            {data.array.map((item, itemIndex) => {
-              const id = `${data.filterType}-${itemIndex}`;
-              return (
-                <div key={id} className="flex items-center space-x-2 my-1">
-                  <RadioGroupItem
-                    className="border-[1px] border-black"
-                    value={item}
-                    id={id}
-                  />
-                  <Label htmlFor={id}>{item}</Label>
-                </div>
-              );
-            })}
+          <RadioGroup
+            value={searchParams.get(data.key) || ""}
+            onValueChange={(value) => handleFilterChange(data.key, value)}
+          >
+            {data.array.map((item) => (
+              <div key={item} className="flex items-center space-x-2 my-1">
+                <RadioGroupItem value={item} id={`${data.key}-${item}`} />
+                <Label htmlFor={`${data.key}-${item}`}>{item}</Label>
+              </div>
+            ))}
           </RadioGroup>
         </div>
       ))}
