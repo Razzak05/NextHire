@@ -39,7 +39,7 @@ const HeroSection = () => {
             className="outline-none border-none w-full"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
           />
           <Button
             className="rounded-r-full bg-[#6A38C2]"

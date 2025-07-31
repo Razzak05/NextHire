@@ -99,22 +99,30 @@ const Jobs = () => {
 
           {/* Pagination Controls */}
           {data.totalPages > 1 && (
-            <div className="flex justify-center mt-8 space-x-2">
-              {Array.from({ length: data.totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <Button
-                    key={page}
-                    variant={page == data.page ? "default" : "outline"}
-                    onClick={() => {
-                      const newParams = new URLSearchParams(searchParams);
-                      newParams.set("page", page);
-                      setSearchParams(newParams);
-                    }}
-                  >
-                    {page}
-                  </Button>
-                )
-              )}
+            <div className="flex justify-center items-center gap-4 mt-6">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={Number(data.page) === 1}
+                onClick={() =>
+                  setSearchParams({ ...params, page: Number(data.page) - 1 })
+                }
+              >
+                &laquo; Prev
+              </Button>
+              <span className="text-sm font-semibold">
+                Page {data.page} of {data.totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={Number(data.page) === data.totalPages}
+                onClick={() =>
+                  setSearchParams({ ...params, page: Number(data.page) + 1 })
+                }
+              >
+                Next &raquo;
+              </Button>
             </div>
           )}
         </div>
