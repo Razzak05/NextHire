@@ -1,61 +1,75 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FilterCard from "./FilterCard";
 import Job from "./Job";
 import useGetAllJobs from "@/hooks/useGetAllJobs";
-import { Loader2 } from "lucide-react";
+import { Loader2, Filter } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Jobs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showFilters, setShowFilters] = useState(false);
   const params = Object.fromEntries(searchParams.entries());
 
-  // Default to first page if not specified
   if (!params.page) params.page = 1;
 
   const { data, isLoading, isError, refetch } = useGetAllJobs(params);
 
-  // Refetch when params change
   useEffect(() => {
     refetch();
   }, [searchParams, refetch]);
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-center items-center h-96">
-          <Loader2 className="w-8 h-8 animate-spin text-[#6A38C2]" />
-        </div>
+      <div className="max-w-7xl mx-auto flex justify-center items-center h-96">
+        <Loader2 className="w-8 h-8 animate-spin text-[#6A38C2]" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-center items-center h-96">
-          <p className="text-red-500">
-            Failed to load jobs. Please try again later.
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto flex justify-center items-center h-96">
+        <p className="text-red-500">
+          Failed to load jobs. Please try again later.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-8">
-      <div className="flex gap-5">
-        <div className="w-[25%]">
+    <div className="max-w-7xl mx-auto py-8 px-6">
+      {/* Mobile Filter Button */}
+      <div className="md:hidden flex justify-end mb-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          <Filter className="w-4 h-4 mr-2" />
+          {showFilters ? "Hide Filters" : "Show Filters"}
+        </Button>
+      </div>
+
+      {/* Mobile Filters */}
+      {showFilters && (
+        <div className="mb-6 md:hidden border rounded-md p-3">
+          <FilterCard onClose={() => setShowFilters(false)} />
+        </div>
+      )}
+
+      <div className="flex flex-col md:flex-row gap-5">
+        {/* Desktop Filters */}
+        <div className="hidden md:block w-[25%]">
           <FilterCard />
         </div>
 
-        <div className="w-[75%]">
+        <div className="w-full md:w-[75%]">
           <div className="mb-6">
-            {/* Show search term if present */}
             {params.search && (
               <div className="mb-4">
                 <p className="text-lg">
-                  Search results for:
+                  Search results for:{" "}
                   <span className="font-bold ml-2">{params.search}</span>
                 </p>
                 <Button
@@ -97,7 +111,6 @@ const Jobs = () => {
             </div>
           )}
 
-          {/* Pagination Controls */}
           {data.totalPages > 1 && (
             <div className="flex justify-center items-center gap-4 mt-6">
               <Button

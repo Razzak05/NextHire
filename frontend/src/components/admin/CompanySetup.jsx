@@ -29,7 +29,7 @@ const CompanySetup = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto my-10">
+    <div className="max-w-xl mx-auto my-10 p-3">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-center justify-between p-8">
           <Button
@@ -44,7 +44,7 @@ const CompanySetup = () => {
             Company Setup
           </h1>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <Label className="mb-2">Company Name</Label>
             <Input

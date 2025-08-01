@@ -20,7 +20,7 @@ const CompanyCreate = () => {
     create({ name: companyName, description });
   };
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto p-4">
       <div className="my-10">
         <h1 className="bold text-2xl">Your Company Name</h1>
         <p className="text-gray-500">

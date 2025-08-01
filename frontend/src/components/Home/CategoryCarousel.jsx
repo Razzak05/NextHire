@@ -27,14 +27,14 @@ const CategoryCarousel = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto my-20">
+    <div className="w-full max-w-5xl mx-auto my-12 px-4">
       <Carousel>
-        <CarouselContent className="gap-x-2 px-1">
+        <CarouselContent className="gap-3">
           {categories.map((item, index) => (
-            <CarouselItem key={index} className="flex basis-auto grow-0">
+            <CarouselItem key={index} className="flex basis-auto ">
               <Button
-                className="rounded-full px-4 py-2"
                 variant="outline"
+                className="rounded-full px-5 py-2 text-sm"
                 onClick={() => handleCategoryClick(item)}
               >
                 {item}

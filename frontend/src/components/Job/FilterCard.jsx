@@ -29,7 +29,7 @@ const filterData = [
   },
 ];
 
-const FilterCard = () => {
+const FilterCard = ({ onClose }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleFilterChange = (key, value) => {
@@ -43,17 +43,29 @@ const FilterCard = () => {
   };
 
   return (
-    <div className="p-4 border rounded-lg shadow-md sticky top-4">
+    <div className="p-4 border rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-3">
         <h1 className="text-xl font-semibold">Filter Jobs</h1>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleClearFilters}
-          className="text-sm text-gray-600"
-        >
-          Clear All
-        </Button>
+        <div className="flex gap-2">
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-sm text-gray-600"
+            >
+              Close
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClearFilters}
+            className="text-sm text-gray-600"
+          >
+            Clear All
+          </Button>
+        </div>
       </div>
       <hr className="mb-4" />
 

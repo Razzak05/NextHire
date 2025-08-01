@@ -15,7 +15,7 @@ const LatestJobs = () => {
   return (
     <div className="max-w-7xl mx-auto my-20">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-4xl font-bold">
+        <h1 className="text-2xl p-4 lg:text-4xl  font-bold">
           <span className="text-[#6A38C2]">Latest & Top</span> Job Openings
         </h1>
         <Link to="/jobs" className="text-[#6A38C2] hover:underline">
@@ -28,7 +28,7 @@ const LatestJobs = () => {
           <Loader2 className="w-8 h-8 animate-spin text-[#6A38C2]" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 m-5 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {data?.jobs?.length > 0 ? (
             data.jobs.map((job) => <LatestJobCards key={job._id} job={job} />)
           ) : (

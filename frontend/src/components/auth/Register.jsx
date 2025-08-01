@@ -26,12 +26,12 @@ const Register = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: registerUser,
     onSuccess: (response) => {
-      toast.success(response?.data?.message || "Registration Successfull !");
+      toast.success(response?.data?.message || "Registration Successful!");
       navigate("/login");
       reset();
     },
     onError: (error) => {
-      toast.error(error?.response?.data?.message || "Registration failed !");
+      toast.error(error?.response?.data?.message || "Registration failed!");
     },
   });
 
@@ -49,12 +49,13 @@ const Register = () => {
   };
 
   return (
-    <div className="flex items-center justify-center max-w-7xl mx-auto">
+    <div className="flex items-center justify-center min-h-screen px-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-1/2 border border-gray-200 rounded-md p-4 my-5"
+        className="w-full max-w-xl border border-gray-200 rounded-md p-4 my-5 bg-white shadow-sm"
       >
-        <h1 className="font-bold text-xl mb-5">Sign Up</h1>
+        <h1 className="font-bold text-xl mb-5 text-center">Sign Up</h1>
+
         <div>
           <Label className="text-sm mb-2">Full Name</Label>
           <Input
@@ -67,6 +68,7 @@ const Register = () => {
             <p className="text-red-500 text-sm">{errors.name.message}</p>
           )}
         </div>
+
         <div>
           <Label className="text-sm mb-2">Email</Label>
           <Input
@@ -91,11 +93,11 @@ const Register = () => {
           <Input
             type="tel"
             className="mb-3"
-            maxLength={15} // Prevent more than 15 digits
+            maxLength={15}
             {...register("phoneNumber", {
               required: "Phone number is required",
               pattern: {
-                value: /^[0-9]{10,15}$/, // Allow 10-15 digits
+                value: /^[0-9]{10,15}$/,
                 message: "Phone number must be 10-15 digits",
               },
             })}
@@ -122,7 +124,8 @@ const Register = () => {
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
         </div>
-        <div className="flex items-center gap-6 my-4">
+
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 my-4">
           <div className="flex items-center gap-2">
             <Input
               type="radio"
@@ -147,7 +150,8 @@ const Register = () => {
         {errors.role && (
           <p className="text-red-500 text-sm">Role is required</p>
         )}
-        <div className="flex items-center gap-2">
+
+        <div className="flex flex-col gap-2 mb-4">
           <Label>Profile Picture</Label>
           <Input
             type="file"
@@ -155,21 +159,23 @@ const Register = () => {
             {...register("profilePic", {
               required: "Profile picture is required",
             })}
-            className="cursor-pointer w-3/4"
+            className="cursor-pointer"
           />
+          {errors.profilePic && (
+            <p className="text-red-500 text-sm">{errors.profilePic.message}</p>
+          )}
         </div>
-        {errors.profilePic && (
-          <p className="text-red-500 text-sm">{errors.profilePic.message}</p>
-        )}
+
         <Button type="submit" className="w-full my-4" disabled={isPending}>
           {isPending ? "Signing Up..." : "Sign Up"}
         </Button>
-        <span className="text-sm">
+
+        <p className="text-sm text-center">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-600">
+          <Link to="/login" className="text-blue-600 hover:underline">
             Login
           </Link>
-        </span>
+        </p>
       </form>
     </div>
   );

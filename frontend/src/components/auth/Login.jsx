@@ -34,12 +34,11 @@ const Login = () => {
       dispatch(loginSuccess(response?.data?.user));
 
       const message = response?.data?.user?.name
-        ? `${response?.data?.user?.name.split(" ")[0]} Welcome back !`
+        ? `${response?.data?.user?.name.split(" ")[0]}, welcome back!`
         : response?.data?.message;
       toast.success(message);
 
       navigate("/");
-
       reset();
     },
     onError: (error) => {
@@ -52,25 +51,28 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center max-w-7xl mx-auto">
+    <div className="flex justify-center items-center min-h-[80vh] px-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-1/2 border border-gray-200 rounded-md p-4 my-5"
+        className="w-full max-w-md border border-gray-200 rounded-md p-6 shadow-sm bg-white"
       >
-        <h1 className="font-bold text-xl mb-5">Login</h1>
+        <h1 className="font-bold text-2xl mb-6 text-center">Login</h1>
 
         {/* Display mutation error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
             {error.response?.data?.message || "Login failed. Please try again."}
           </div>
         )}
 
+        {/* Email Field */}
         <div className="mb-4">
-          <Label className="text-sm mb-2 block">Email</Label>
+          <Label htmlFor="email" className="mb-1 block text-sm font-medium">
+            Email
+          </Label>
           <Input
+            id="email"
             type="email"
-            className="mb-1"
             placeholder="example@gmail.com"
             {...register("email", {
               required: "Email is required",
@@ -81,15 +83,18 @@ const Login = () => {
             })}
           />
           {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email.message}</p>
+            <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
           )}
         </div>
 
+        {/* Password Field */}
         <div className="mb-4">
-          <Label className="text-sm mb-2 block">Password</Label>
+          <Label htmlFor="password" className="mb-1 block text-sm font-medium">
+            Password
+          </Label>
           <Input
+            id="password"
             type="password"
-            className="mb-1"
             placeholder="Enter your password"
             {...register("password", {
               required: "Password is required",
@@ -100,53 +105,51 @@ const Login = () => {
             })}
           />
           {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password.message}</p>
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
+        {/* Role Selection */}
         <div className="mb-4">
-          <Label className="text-sm mb-2 block">Role</Label>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
+          <Label className="mb-1 block text-sm font-medium">Role</Label>
+          <div className="flex gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
-                id="student"
                 value="student"
-                className="cursor-pointer"
                 {...register("role", { required: "Role is required" })}
               />
-              <Label htmlFor="student" className="cursor-pointer">
-                Student
-              </Label>
-            </div>
-            <div className="flex items-center gap-2">
+              <span>Student</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
-                id="recruiter"
                 value="recruiter"
-                className="cursor-pointer"
                 {...register("role", { required: "Role is required" })}
               />
-              <Label htmlFor="recruiter" className="cursor-pointer">
-                Recruiter
-              </Label>
-            </div>
+              <span>Recruiter</span>
+            </label>
           </div>
           {errors.role && (
-            <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
+            <p className="text-red-500 text-xs mt-1">{errors.role.message}</p>
           )}
         </div>
 
-        <Button type="submit" className="w-full my-4" disabled={isPending}>
+        {/* Submit Button */}
+        <Button type="submit" className="w-full mt-4" disabled={isPending}>
           {isPending ? "Signing in..." : "Sign In"}
         </Button>
 
-        <span className="text-sm">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-blue-600 hover:underline">
+        {/* Link to Register */}
+        <div className="text-center mt-4 text-sm">
+          Don&apos;t have an account?{" "}
+          <Link to="/register" className="text-indigo-600 hover:underline">
             Sign Up
           </Link>
-        </span>
+        </div>
       </form>
     </div>
   );

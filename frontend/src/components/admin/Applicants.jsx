@@ -3,7 +3,7 @@ import ApplicantsTable from "./ApplicantsTable";
 
 const Applicants = () => {
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto p-3">
       <h1 className="font-bold text-xl my-5">Applicants (3)</h1>
       <ApplicantsTable />
     </div>

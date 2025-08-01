@@ -9,7 +9,7 @@ const AdminJobs = () => {
   const [filter, setFilter] = useState("");
 
   return (
-    <div className="max-w-6xl mx-auto my-10">
+    <div className="max-w-6xl mx-auto my-10 p-3">
       <div className="flex items-center justify-between mb-6">
         <Input
           className="w-auto"
