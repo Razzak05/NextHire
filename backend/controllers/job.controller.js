@@ -13,6 +13,7 @@ export const createJob = async (req, res) => {
       position,
       experience,
       companyId,
+      vacancies,
     } = req.body;
 
     if (
@@ -24,7 +25,8 @@ export const createJob = async (req, res) => {
       !jobType ||
       !position ||
       !experience ||
-      !companyId
+      !companyId ||
+      !vacancies
     ) {
       return res.status(400).json({
         message: "All the fields are required !",
@@ -43,6 +45,7 @@ export const createJob = async (req, res) => {
       experienceLevel: experience,
       company: companyId,
       createdBy: req.user._id,
+      vacancies: Number(vacancies),
     });
 
     await job.save();

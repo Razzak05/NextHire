@@ -53,7 +53,7 @@ const jobFields = [
     label: "Experience Level",
     name: "experience",
     type: "number",
-    placeholder: "e.g., Entry, Mid",
+    placeholder: "e.g., 3",
   },
   {
     label: "Position",
