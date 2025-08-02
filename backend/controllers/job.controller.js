@@ -42,7 +42,7 @@ export const createJob = async (req, res) => {
       location,
       jobType,
       position,
-      experienceLevel: experience,
+      experienceLevel: Number(experience),
       company: companyId,
       createdBy: req.user._id,
       vacancies: Number(vacancies),
