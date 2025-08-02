@@ -23,6 +23,11 @@ app.use(express.json());
 app.use(cookieParser());
 connectDB();
 
+//Test API
+app.get("/", (req, res) => {
+  res.send("Welcome to NextHiren!");
+});
+
 //Routes
 app.use("/api/user", userRouter);
 app.use("/api/company", companyRouter);
