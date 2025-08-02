@@ -25,7 +25,7 @@ connectDB();
 
 //Test API
 app.get("/", (req, res) => {
-  res.send("Welcome to NextHiren!");
+  res.send("Welcome to NextHire!");
 });
 
 //Routes
